@@ -15,12 +15,8 @@
 
 > [!NOTE]
 > **Open Interpreter 1.0** is almost here.
->
-> Please help test the [development branch](https://github.com/OpenInterpreter/open-interpreter/tree/development) and share your experience in the [Discord](https://discord.gg/Hvz9Axh84z):
-> ```
-> pip install git+https://github.com/OpenInterpreter/open-interpreter.git@development
-> interpreter --help
-> ```
+
+```
 
 <br>
 
@@ -93,6 +89,58 @@ interpreter.chat() # Starts an interactive chat
 ### GitHub Codespaces
 
 Press the `,` key on this repository's GitHub page to create a codespace. After a moment, you'll receive a cloud virtual machine environment pre-installed with open-interpreter. You can then start interacting with it directly and freely confirm its execution of system commands without worrying about damaging the system.
+
+## UI-TARS Enhanced Browser Control
+
+This version of Open Interpreter includes integration with ByteDance-Seed/UI-TARS-1.5-7B for enhanced browser control capabilities:
+
+- Advanced visual understanding of web pages
+- Improved identification of interactive elements
+- Better context awareness for user intents
+- Enhanced page analysis combining HTML parsing with visual understanding
+
+To use UI-TARS enhanced browser control:
+
+```shell
+pip install 'open-interpreter[ui-tars]'
+```
+
+## Deployment Options
+
+Open Interpreter with UI-TARS can be deployed in multiple environments:
+
+### Container Deployment (Docker)
+
+```bash
+# Using Docker Compose (recommended)
+docker-compose up --build
+
+# Direct Docker build
+docker build -f Dockerfile.ui-tars -t open-interpreter:ui-tars .
+docker run -p 8000:8000 open-interpreter:ui-tars
+```
+
+### Portable Installation
+
+``bash
+# Linux/macOS
+./build-portable.sh
+
+# Windows
+build-portable.bat
+```
+
+### Direct System Installation
+
+```bash
+# Install with UI-TARS support
+pip install 'open-interpreter[ui-tars]'
+
+# Or install from source
+pip install ".[ui-tars,server,local]"
+```
+
+See [Deployment Options](docs/deployment-options.md) for detailed instructions.
 
 ## Comparison to ChatGPT's Code Interpreter
 
@@ -404,6 +452,21 @@ A new browser window should open. The documentation will be available at [http:/
 Thank you for your interest in contributing! We welcome involvement from the community.
 
 Please see our [contributing guidelines](https://github.com/OpenInterpreter/open-interpreter/blob/main/docs/CONTRIBUTING.md) for more details on how to get involved.
+
+# Deploy
+
+[![Deploy to Railway](https://railway.app/button.svg)](https://railway.app/new/template?templateUrl=https://github.com/OpenInterpreter/open-interpreter&envs=OPENAI_API_KEY&optionalEnvs=OPENAI_API_KEY)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/OpenInterpreter/open-interpreter&project-name=hustle-claude-frontend&repo-name=hustle-claude-frontend)
+
+## Environment Variables
+
+Create a `.env` file based on `.env.example`:
+
+```
+OPENAI_API_KEY=your_openai_api_key_here
+PORT=8000
+VITE_API_BASE=https://your-railway-app-url.up.railway.app
+```
 
 # Roadmap
 
