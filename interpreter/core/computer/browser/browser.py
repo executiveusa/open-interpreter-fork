@@ -14,6 +14,7 @@ class Browser:
     def __init__(self, computer):
         self.computer = computer
         self._driver = None
+        self.use_ui_tars = True  # Enable UI-TARS by default for enhanced browser control
 
     @property
     def driver(self, headless=False):
@@ -119,6 +120,37 @@ class Browser:
             for idx, elem in enumerate(elements)
         ]
 
+        # Get screenshot for UI-TARS analysis
+        screenshot = self.driver.get_screenshot_as_base64()
+        
+        # Use UI-TARS for enhanced page analysis if available
+        if self.use_ui_tars and hasattr(self.computer, 'vision') and hasattr(self.computer.vision, 'ui_tars'):
+            ui_tars_query = f"""
+            Analyze this webpage screenshot in the context of the user's intent: "{intent}".
+            
+            Please identify and describe:
+            1. All interactive elements visible in the screenshot
+            2. Their positions and functions
+            3. The most relevant elements for the user's intent
+            4. Any potential actions the user might want to take
+            
+            Focus on elements that would help fulfill this specific intent.
+            """
+            
+            try:
+                ui_tars_analysis = self.computer.vision.query(
+                    query=ui_tars_query,
+                    base_64=screenshot,
+                    use_ui_tars=True
+                )
+                
+                print(f"UI-TARS Analysis: {ui_tars_analysis}")
+            except Exception as e:
+                print(f"UI-TARS analysis failed: {e}")
+                ui_tars_analysis = None
+        else:
+            ui_tars_analysis = None
+
         ai_query = f"""
         Below is the content of the current webpage along with interactive elements. 
         Given the intent "{intent}", please extract useful information and provide sufficient details 
@@ -137,6 +169,10 @@ class Browser:
         Interactive Elements:
         {elements_info}
         """
+        
+        # Add UI-TARS analysis if available
+        if ui_tars_analysis:
+            ai_query += f"\n\nUI-TARS Visual Analysis:\n{ui_tars_analysis}"
 
         # response = self.computer.ai.chat(ai_query)
 
