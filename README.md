@@ -16,8 +16,6 @@
 > [!NOTE]
 > **Open Interpreter 1.0** is almost here.
 
-```
-
 <br>
 
 <img alt="local_explorer" src="https://github.com/OpenInterpreter/open-interpreter/assets/63927363/d941c3b4-b5ad-4642-992c-40edf31e2e7a">
@@ -26,8 +24,10 @@
 </p>
 <br>
 
+## Install
+
 ```shell
-pip install open-interpreter
+pip install git+https://github.com/OpenInterpreter/open-interpreter.git
 ```
 
 > Not working? Read our [setup guide](https://docs.openinterpreter.com/getting-started/setup).
@@ -122,7 +122,7 @@ docker run -p 8000:8000 open-interpreter:ui-tars
 
 ### Portable Installation
 
-``bash
+```bash
 # Linux/macOS
 ./build-portable.sh
 
