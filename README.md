@@ -43,6 +43,19 @@
 <br>
 
 <img alt="local_explorer" src="https://github.com/OpenInterpreter/open-interpreter/assets/63927363/d941c3b4-b5ad-4642-992c-40edf31e2e7a">
+</p>
+<br>
+
+**Open Interpreter** lets LLMs run code (Python, Javascript, Shell, and more) locally. You can chat with Open Interpreter through a ChatGPT-like interface in your terminal by running `$ interpreter` after installing.
+
+This provides a natural-language interface to your computer's general-purpose capabilities:
+
+- Create and edit photos, videos, PDFs, etc.
+- Control a Chrome browser to perform research
+- Plot, clean, and analyze large datasets
+- ...etc.
+
+**⚠️ Note: You'll be asked to approve code before it's run.**
 
 <br>
 ```
@@ -69,6 +82,11 @@
 <img alt="local_explorer" src="https://github.com/OpenInterpreter/open-interpreter/assets/63927363/d941c3b4-b5ad-4642-992c-40edf31e2e7a">
 
 <br>
+
+### Install
+
+```shell
+pip install git+https://github.com/OpenInterpreter/open-interpreter.git
 ```
 <h1 align="center">● Open Interpreter</h1>
 
@@ -84,6 +102,11 @@
     <br>
     <br><a href="https://0ggfznkwh4j.typeform.com/to/G21i9lJ2">Get early access to the desktop app</a>‎ ‎ |‎ ‎ <a href="https://docs.openinterpreter.com/">Documentation</a><br>
 </p>
+> Not working? Read our [setup guide](https://docs.openinterpreter.com/getting-started/setup).
+
+### Terminal
+
+After installation, simply run `interpreter`:
 
 > [!NOTE]
 > **Open Interpreter 1.0** is almost here.
