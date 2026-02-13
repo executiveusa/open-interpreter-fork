@@ -72,11 +72,17 @@ typer = "^0.12.5"
 fastapi = "^0.111.0"
 uvicorn = "^0.30.1"
 
+# Dashboard dependencies
+flask = "^3.0.0"
+flask-socketio = "^5.3.6"
+eventlet = "^0.34.2"
+
 [tool.poetry.extras]
 os = ["opencv-python", "pyautogui", "plyer", "pywinctl", "pytesseract", "sentence-transformers", "ipywidgets", "timm", "screeninfo"]
 safe = ["semgrep"]
 local = ["opencv-python", "pytesseract", "torch", "transformers", "einops", "torchvision", "easyocr"]
 server = ["fastapi", "janus", "uvicorn"]
+dashboard = ["flask", "flask-socketio", "eventlet"]
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.10.1"
@@ -95,6 +101,7 @@ i = "interpreter.terminal_interface.start_terminal_interface:main"
 interpreter = "interpreter.terminal_interface.start_terminal_interface:main"
 wtf = "scripts.wtf:main"
 interpreter-classic = "interpreter.terminal_interface.start_terminal_interface:main"
+interpreter-dashboard = "interpreter.integrations.dashboard:start_dashboard"
 
 [tool.black]
 target-version = ['py311']
