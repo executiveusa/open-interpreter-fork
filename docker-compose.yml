@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  # Main Open Interpreter Server
+  interpreter:
+    build:
+      context: .
+      dockerfile: Dockerfile.production
+    container_name: open-interpreter
+    ports:
+      - "8000:8000"   # LMC WebSocket Server
+      - "5000:5000"   # Dashboard Web UI
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - COMPOSIO_API_KEY=${COMPOSIO_API_KEY:-}
+      - NOTION_API_KEY=${NOTION_API_KEY:-}
+      - NOTION_DATABASE_ID=${NOTION_DATABASE_ID:-}
+      - SECRET_KEY=${SECRET_KEY:-dev-secret-key-change-in-production}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/state"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Redis for message queue (optional, for scaling)
+  redis:
+    image: redis:7-alpine
+    container_name: interpreter-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+
+  # Nginx reverse proxy (production)
+  nginx:
+    image: nginx:alpine
+    container_name: interpreter-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - interpreter
+    restart: unless-stopped
+    profiles:
+      - production
+
+volumes:
+  redis_data:
+
+networks:
+  default:
+    name: interpreter-network

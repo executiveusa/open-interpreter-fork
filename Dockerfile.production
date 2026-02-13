@@ -1,0 +1,57 @@
+###########################################################################################
+# Production Dockerfile for Open Interpreter with Dashboard                              #
+# Includes: LMC Server (port 8000) + Dashboard (port 5000) + Multi-agent coordination    #
+###########################################################################################
+
+FROM python:3.11.8-slim
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV HOST=0.0.0.0
+ENV DASHBOARD_HOST=0.0.0.0
+ENV DASHBOARD_PORT=5000
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create app directory
+WORKDIR /app
+
+# Copy dependency files
+COPY poetry.lock pyproject.toml README.md ./
+
+# Install Python dependencies
+RUN pip install --no-cache-dir poetry && \
+    poetry config virtualenvs.create false && \
+    poetry install --no-interaction --no-ansi --with dev --all-extras
+
+# Copy application code
+COPY interpreter/ interpreter/
+COPY scripts/ scripts/
+COPY prompts/ prompts/
+
+# Create necessary directories
+RUN mkdir -p /app/data/mail /app/data/beads /app/logs
+
+# Expose ports
+# 8000 - LMC WebSocket Server
+# 5000 - Dashboard Web UI
+EXPOSE 8000 5000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:5000/api/state || exit 1
+
+# Create non-root user for security
+RUN useradd -m -u 1000 appuser && \
+    chown -R appuser:appuser /app
+USER appuser
+
+# Default entrypoint - can be overridden
+ENTRYPOINT ["python", "-m", "interpreter.integrations.dashboard"]
+CMD ["--host", "0.0.0.0", "--port", "5000"]

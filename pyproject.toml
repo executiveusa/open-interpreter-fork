@@ -102,6 +102,7 @@ interpreter = "interpreter.terminal_interface.start_terminal_interface:main"
 wtf = "scripts.wtf:main"
 interpreter-classic = "interpreter.terminal_interface.start_terminal_interface:main"
 interpreter-dashboard = "interpreter.integrations.dashboard:start_dashboard"
+interpreter-server = "interpreter.integrations.production_server:main"
 
 [tool.black]
 target-version = ['py311']
