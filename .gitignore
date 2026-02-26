@@ -281,3 +281,22 @@ open-interpreter-env/
 **/.DS_Store
 **/Thumbs.db
 **/.ipynb_checkpoints
+
+# Ralphie Loop
+.ralphy/
+.ralphie-worktrees/
+.ralphy-sandboxes/
+
+# Logs
+logs/
+*.log
+
+# Data
+data/
+screenshots/
+
+# SSL/Certificates
+ssl/
+*.pem
+*.key
+*.crt

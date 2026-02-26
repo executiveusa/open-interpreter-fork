@@ -1,0 +1,246 @@
+# Open Interpreter - LLM-Ready Codebase Overview
+
+## Project Information
+- **Name**: Open Interpreter (Enhanced Fork)
+- **Description**: Autonomous AI coding agent with computer control, web scraping, multi-computer coordination via Orgo, and Ralphie loop integration
+- **Version**: 0.4.3
+- **Language**: Python 3.9-3.12
+- **License**: MIT
+
+## Core Capabilities
+1. **Computer Control** - Full GUI automation via PyAutoGUI
+2. **Web Scraping** - Intelligent scraping with templates (YouTube, e-commerce, news, LinkedIn, GitHub)
+3. **Multi-Computer Control** - Orgo API integration for distributed task execution
+4. **Code Execution** - Python, JavaScript, Shell, and more
+5. **Vision-Based Navigation** - UI-TARS integration for screen understanding
+6. **Ralphie Loop** - Autonomous coding loop that runs tasks until done
+7. **Multi-Agent Coordination** - Agent Mail system for inter-agent communication
+8. **Production Deployment** - Docker, cloud deployment (AWS, GCP, Heroku, DigitalOcean)
+
+## Project Structure
+
+```
+interpreter/
+├── core/                    # Core interpreter functionality
+│   ├── computer/           # Computer control and automation
+│   │   ├── browser/        # Browser automation (Selenium)
+│   │   ├── vision/         # Vision-based navigation (UI-TARS)
+│   │   └── poml.py         # Prompt Orchestration Markup Language
+│   └── ...
+├── tools/                   # Tool modules
+│   └── scraper.py          # Web scraping tool with templates
+├── integrations/            # External integrations
+│   ├── agent_mail.py       # Multi-agent communication
+│   ├── dashboard.py        # Real-time monitoring dashboard
+│   ├── orgo.py             # Orgo multi-computer integration
+│   ├── composio.py         # Composio integration
+│   └── notion.py           # Notion integration
+├── ralphie_loop.py         # Ralphie loop integration
+└── ...
+
+drizzle/                     # Database schema
+server/                      # Server components
+examples/                    # Example scripts
+docs/                        # Documentation
+```
+
+## Key Files
+
+### Core Modules
+- `interpreter/core/computer/computer.py` - Main computer control interface
+- `interpreter/core/computer/browser/browser.py` - Browser automation
+- `interpreter/core/computer/vision/ui_tars/ui_tars_vision.py` - Vision-based navigation
+- `interpreter/core/computer/poml.py` - POML integration
+
+### Tools
+- `interpreter/tools/scraper.py` - Web scraping with templates
+  - Templates: YouTube, e-commerce, news, LinkedIn, GitHub, generic
+  - Features: Auto-pagination, rate limiting, anti-bot detection
+  - Export: JSON, CSV, Excel
+
+### Integrations
+- `interpreter/integrations/orgo.py` - Orgo multi-computer control
+  - Connect to remote computers
+  - Execute commands remotely
+  - Take screenshots
+  - Distribute tasks across multiple computers
+  - Parallel web scraping
+
+- `interpreter/integrations/agent_mail.py` - Multi-agent communication
+- `interpreter/integrations/dashboard.py` - Real-time monitoring
+- `interpreter/ralphie_loop.py` - Autonomous coding loop
+
+### Configuration
+- `pyproject.toml` - Python project configuration
+- `docker-compose.yml` - Docker deployment configuration
+- `.ralphy/config.yaml` - Ralphie loop configuration (auto-generated)
+
+## Usage Examples
+
+### Basic Computer Control
+```python
+from interpreter import interpreter
+interpreter.chat("Take a screenshot and save it to desktop")
+```
+
+### Web Scraping
+```python
+from interpreter.tools.scraper import ScraperTool
+import asyncio
+
+scraper = ScraperTool()
+result = asyncio.run(scraper.scrape(
+    url="https://news.ycombinator.com",
+    template="news",
+    max_pages=5
+))
+```
+
+### Orgo Multi-Computer Control
+```python
+from interpreter.integrations.orgo import OrgoClient, MultiComputerAgent
+import asyncio
+
+orgo = OrgoClient(api_key="sk_live_...")
+agent = MultiComputerAgent(orgo)
+
+# Parallel scraping across multiple computers
+urls = ["https://site1.com", "https://site2.com", "https://site3.com"]
+results = asyncio.run(agent.parallel_scraping(urls))
+```
+
+### Ralphie Loop
+```bash
+# Initialize configuration
+python -m interpreter.ralphie_loop --init
+
+# Run a single task
+python -m interpreter.ralphie_loop "Add login button to homepage"
+
+# Run tasks from PRD
+python -m interpreter.ralphie_loop --prd PRD.md
+
+# Run tasks in parallel
+python -m interpreter.ralphie_loop --prd PRD.md --parallel --max-parallel 5
+```
+
+## Development Workflow
+
+### Setup
+```bash
+# Install dependencies
+pip install -e .
+
+# Initialize Ralphie configuration
+python -m interpreter.ralphie_loop --init
+```
+
+### Testing
+```bash
+# Run tests
+pytest
+
+# Run specific test
+pytest interpreter/tools/test_scraper.py
+```
+
+### Deployment
+```bash
+# Docker Compose
+docker-compose up -d
+
+# Cloud deployment (AWS, GCP, Heroku)
+# See DEPLOYMENT.md for detailed instructions
+```
+
+## Environment Variables
+
+Required:
+- `OPENAI_API_KEY` or `ANTHROPIC_API_KEY` - LLM API key
+- `ORGO_API_KEY` - Orgo API key for multi-computer control (optional)
+
+Optional:
+- `COMPOSIO_API_KEY` - Composio integration
+- `NOTION_API_KEY` - Notion integration
+- `SECRET_KEY` - Flask secret key for dashboard
+- `LOG_LEVEL` - Logging level (default: INFO)
+
+## Architecture Principles
+
+1. **Modular Design** - Each feature is a separate module
+2. **Async/Await** - All I/O operations use async/await
+3. **Type Safety** - Type hints for all functions
+4. **Error Handling** - Comprehensive error handling and logging
+5. **Testing** - Unit tests for all features
+6. **Documentation** - Docstrings for all functions and classes
+
+## Integration Points
+
+### Orgo API
+- Base URL: `https://api.orgo.ai/v1` (placeholder)
+- Authentication: Bearer token
+- Endpoints:
+  - `/computers` - List computers
+  - `/computers/{id}/connect` - Connect to computer
+  - `/computers/{id}/execute` - Execute command
+  - `/computers/{id}/screenshot` - Take screenshot
+
+### Ralphie Loop
+- Configuration: `.ralphy/config.yaml`
+- Progress tracking: `.ralphy/progress.txt`
+- Auto-detects: Language, framework, test/lint/build commands
+- Supports: Sequential and parallel execution
+
+## Best Practices
+
+1. **Always use async/await** for I/O operations
+2. **Follow PEP 8** style guide
+3. **Write comprehensive docstrings** for all functions
+4. **Include type hints** for all parameters and return values
+5. **Write unit tests** for all new features
+6. **Use Ralphie loop** for autonomous development
+7. **Never modify** files in `.ralphy/`, `.git/`, or `*.lock`
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Use Ralphie loop for development
+4. Write tests for new features
+5. Submit a pull request
+
+## Resources
+
+- GitHub: https://github.com/executiveusa/open-interpreter-fork
+- Ralphie: https://github.com/michaelshimeles/ralphy
+- Orgo API: (documentation pending)
+- Deployment Guide: DEPLOYMENT.md
+
+## Schema.org Metadata
+
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  "name": "Open Interpreter Enhanced Fork",
+  "description": "Autonomous AI coding agent with computer control, web scraping, and multi-computer coordination",
+  "programmingLanguage": "Python",
+  "runtimePlatform": "Python 3.9-3.12",
+  "codeRepository": "https://github.com/executiveusa/open-interpreter-fork",
+  "license": "https://opensource.org/licenses/MIT",
+  "author": {
+    "@type": "Organization",
+    "name": "Executive USA"
+  },
+  "keywords": [
+    "AI",
+    "automation",
+    "computer-control",
+    "web-scraping",
+    "multi-agent",
+    "autonomous-coding",
+    "ralphie-loop",
+    "orgo-integration"
+  ]
+}
+```
