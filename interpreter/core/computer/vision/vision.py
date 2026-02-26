@@ -18,8 +18,9 @@ class Vision:
         self.model = None  # Will load upon first use
         self.tokenizer = None  # Will load upon first use
         self.easyocr = None
+        self.ui_tars = None  # UI-TARS model for enhanced GUI interaction
 
-    def load(self, load_moondream=True, load_easyocr=True):
+    def load(self, load_moondream=True, load_easyocr=True, load_ui_tars=False):
         # print("Loading vision models (Moondream, EasyOCR)...\n")
 
         with contextlib.redirect_stdout(
@@ -54,7 +55,18 @@ class Vision:
                 self.tokenizer = transformers.AutoTokenizer.from_pretrained(
                     model_id, revision=revision
                 )
-                return True
+                
+            # Load UI-TARS if requested
+            if load_ui_tars and self.ui_tars is None:
+                try:
+                    from .ui_tars.ui_tars_vision import UiTarsVision
+                    self.ui_tars = UiTarsVision(self.computer)
+                    if self.computer.debug:
+                        print("UI-TARS vision module loaded")
+                except ImportError as e:
+                    print(f"Failed to load UI-TARS vision module: {e}")
+                
+            return True
 
     def ocr(
         self,
@@ -110,9 +122,12 @@ class Vision:
         try:
             if not self.easyocr:
                 self.load(load_moondream=False)
-            result = self.easyocr.readtext(path)
-            text = " ".join([item[1] for item in result])
-            return text.strip()
+            if self.easyocr:
+                result = self.easyocr.readtext(path)
+                text = " ".join([item[1] for item in result])
+                return text.strip()
+            else:
+                return ""
         except ImportError:
             print(
                 "\nTo use local vision, run `pip install 'open-interpreter[local]'`.\n"
@@ -126,11 +141,28 @@ class Vision:
         path=None,
         lmc=None,
         pil_image=None,
+        use_ui_tars=False
     ):
         """
-        Uses Moondream to ask query of the image (which can be a base64, path, or lmc message)
+        Uses Moondream or UI-TARS to ask query of the image (which can be a base64, path, or lmc message)
         """
-
+        
+        # Use UI-TARS if requested
+        if use_ui_tars:
+            if self.ui_tars is None:
+                self.load(load_moondream=False, load_easyocr=False, load_ui_tars=True)
+            if self.ui_tars:
+                return self.ui_tars.query(
+                    query=query,
+                    base_64=base_64,
+                    path=path,
+                    lmc=lmc,
+                    pil_image=pil_image
+                )
+            else:
+                print("UI-TARS model not available, falling back to Moondream")
+        
+        # Fallback to Moondream
         if self.model == None and self.tokenizer == None:
             try:
                 success = self.load(load_easyocr=False)
@@ -142,6 +174,8 @@ class Vision:
             if not success:
                 return ""
 
+        # Process image input
+        img = None
         if lmc:
             if "base64" in lmc["format"]:
                 # # Extract the extension from the format, default to 'png' if not specified
@@ -165,11 +199,20 @@ class Vision:
             img = Image.open(path)
         elif pil_image:
             img = pil_image
+        else:
+            return "No image provided"
+
+        if img is None:
+            return "Failed to process image"
 
         with contextlib.redirect_stdout(open(os.devnull, "w")):
-            enc_image = self.model.encode_image(img)
-            answer = self.model.answer_question(
-                enc_image, query, self.tokenizer, max_length=400
-            )
+            if self.model and self.tokenizer:
+                enc_image = self.model.encode_image(img)
+                answer = self.model.answer_question(
+                    enc_image, query, self.tokenizer, max_length=400
+                )
+                return answer
+            else:
+                return "Vision model not loaded"
 
         return answer

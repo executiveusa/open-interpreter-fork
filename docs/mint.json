@@ -109,6 +109,12 @@
       ]
     },
     {
+      "group": "Agents & Prompting",  // Added new group for agents
+      "pages": [
+        "agents"  // Added reference to agents.md
+      ]
+    },
+    {
       "group": "Protocols",
       "pages": [
         "protocols/lmc-messages"
@@ -147,6 +153,11 @@
     "suggestEdit": true
   },
   "footerSocials": {
+    "twitter": "https://x.com/OpenInterpreter",
+    "youtube": "https://www.youtube.com/@OpenInterpreter",
+    "linkedin": "https://www.linkedin.com/company/openinterpreter"
+  }
+}  "footerSocials": {
     "twitter": "https://x.com/OpenInterpreter",
     "youtube": "https://www.youtube.com/@OpenInterpreter",
     "linkedin": "https://www.linkedin.com/company/openinterpreter"

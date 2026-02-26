@@ -17,6 +17,7 @@ from .skills.skills import Skills
 from .sms.sms import SMS
 from .terminal.terminal import Terminal
 from .vision.vision import Vision
+from .poml import POML  # Added POML module
 
 
 class Computer:
@@ -44,6 +45,7 @@ class Computer:
         self.docs = Docs(self)
         self.ai = Ai(self)
         self.files = Files(self)
+        self.poml = POML(self)  # Added POML instance
 
         self.emit_images = True
         self.api_base = "https://api.openinterpreter.com/v0"

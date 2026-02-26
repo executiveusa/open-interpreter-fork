@@ -1,0 +1,51 @@
+###########################################################################################
+# Dockerfile for Open Interpreter with UI-TARS support for enhanced browser control      #
+# This Dockerfile includes all dependencies needed for UI-TARS model integration         #
+###########################################################################################
+
+FROM nvidia/cuda:11.8-devel-ubuntu22.04
+
+# Set environment variables
+ENV HOST 0.0.0.0
+ENV DEBIAN_FRONTEND=noninteractive
+# ^ Sets the server host to 0.0.0.0, Required for the server to be accessible outside the container
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    python3.11 \
+    python3.11-pip \
+    python3.11-venv \
+    curl \
+    git \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create symbolic links for python and pip
+RUN ln -s /usr/bin/python3.11 /usr/bin/python
+RUN ln -s /usr/bin/pip3 /usr/bin/pip
+
+# Upgrade pip
+RUN pip install --upgrade pip
+
+# Set working directory
+WORKDIR /app
+
+# Copy required files into container
+COPY . .
+
+# Install all dependencies including UI-TARS requirements
+# Note: This will require significant disk space (~10-15GB) for the ML dependencies
+RUN pip install ".[ui-tars,server,local]"
+
+# Download UI-TARS model during build time (optional, can be done at runtime)
+# This will significantly increase the image size but reduce first-run time
+# RUN python -c "from interpreter.core.computer.vision.ui_tars.ui_tars_vision import UiTarsVision; \
+#                computer = type('Computer', (), {'debug': True})(); \
+#                ui_tars = UiTarsVision(computer); \
+#                ui_tars.load()"
+
+# Expose port 8000
+EXPOSE 8000
+
+# Start the server
+ENTRYPOINT ["interpreter", "--server"]
