@@ -1,3 +1,7 @@
+## Pauli personal 5.1 profile
+
+This fork includes an opt-in, vendor-neutral personal-agent overlay at [`interpreter/terminal_interface/profiles/defaults/pauli-personal-51.yaml`](interpreter/terminal_interface/profiles/defaults/pauli-personal-51.yaml). It leaves upstream defaults unchanged. See [`docs/PAULI-PERSONAL-5.1.md`](docs/PAULI-PERSONAL-5.1.md).
+
 <h1 align="center">● Open Interpreter</h1>
 
 <p align="center">
